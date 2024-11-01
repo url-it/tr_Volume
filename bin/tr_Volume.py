@@ -36,33 +36,74 @@ else:
 
 
 # join_our_list = "(Join/ask questions at https://groups.google.com/forum/#!forum/physicell-users)\n"
+# Change to the home directory
+home = '/content'
+os.chdir(home)
 
+# Change to the Motility_Training_App directory
+os.chdir('Motility_Training_App')
 
-# create the tabs, but don't display yet
-about_tab = AboutTab()
-config_tab = ConfigTab()
+# Change to the data directory
+os.chdir('data')
 
-xml_file = os.path.join('../data', 'PhysiCell_settings.xml')
+# Define the path to the XML file
+xml_file = 'PhysiCell_settings.xml'
 full_xml_filename = os.path.abspath(xml_file)
 
+# Check if the file exists
+if not os.path.isfile(full_xml_filename):
+    # Handle the error: copy the file from another location or provide an error message
+    print(f"File not found: {full_xml_filename}")
+    
+    # Example: Copy the file from another location
+    source_file_path = '../data/PhysiCell_settings.xml'
+    if os.path.isfile(source_file_path):
+        shutil.copy(source_file_path, full_xml_filename)
+        print(f"Copied {source_file_path} to {full_xml_filename}")
+    else:
+        raise FileNotFoundError(f"Source file not found: {source_file_path}")
 
-
-tree = ET.parse(full_xml_filename)  # this file cannot be overwritten; part of tool distro
+# Proceed with your code
+tree = ET.parse(full_xml_filename)
+xml_root = tree.getroot()
+# Proceed with your code
+tree = ET.parse(full_xml_filename)
 xml_root = tree.getroot()
 
 microenv_tab = MicroenvTab()
 user_tab = UserTab()
-
-if xml_root.find('.//cell_definitions'):
-    cell_types_tab = CellTypesTab()
-
 # svg = SVGTab()
 sub = SubstrateTab()
-animate_tab = AnimateTab()
+
 
 nanoHUB_flag = False
 if( 'HOME' in os.environ.keys() ):
     nanoHUB_flag = "home/nanohub" in os.environ['HOME']
+
+
+# # create the tabs, but don't display yet
+# about_tab = AboutTab()
+# config_tab = ConfigTab()
+
+# xml_file = os.path.join('../data', 'PhysiCell_settings.xml')
+# full_xml_filename = os.path.abspath(xml_file)
+
+# tree = ET.parse(full_xml_filename)  # this file cannot be overwritten; part of tool distro
+# xml_root = tree.getroot()
+
+# microenv_tab = MicroenvTab()
+# user_tab = UserTab()
+
+# if xml_root.find('.//cell_definitions'):
+#     cell_types_tab = CellTypesTab()
+
+# # svg = SVGTab()
+# sub = SubstrateTab()
+# animate_tab = AnimateTab()
+
+# nanoHUB_flag = False
+# if( 'HOME' in os.environ.keys() ):
+#     nanoHUB_flag = "home/nanohub" in os.environ['HOME']
 
 
 # callback when user selects a cached run in the 'Load Config' dropdown widget.
@@ -439,3 +480,9 @@ sub.update_dropdown_fields("data")   # WARNING: generates multiple "<Figure size
 # print('config_tab.svg_interval.value= ',config_tab.svg_interval.value )
 # print('config_tab.mcds_interval.value= ',config_tab.mcds_interval.value )
 #sub.update_params(config_tab)
+config_file_path = os.path.join('../data', 'PhysiCell_settings.xml')
+if not os.path.isfile(config_file_path):
+    raise FileNotFoundError(f"No such file or directory: '{config_file_path}'")
+fill_gui_params(config_file_path)
+output_dir = "tmpdir"
+sub.update_dropdown_fields("data")
