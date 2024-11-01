@@ -42,8 +42,10 @@ else:
 about_tab = AboutTab()
 config_tab = ConfigTab()
 
-xml_file = os.path.join('data', 'PhysiCell_settings.xml')
+xml_file = os.path.join('../data', 'PhysiCell_settings.xml')
 full_xml_filename = os.path.abspath(xml_file)
+
+
 
 tree = ET.parse(full_xml_filename)  # this file cannot be overwritten; part of tool distro
 xml_root = tree.getroot()
