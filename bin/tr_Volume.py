@@ -41,7 +41,7 @@ home = '/content'
 os.chdir(home)
 
 # Change to the Motility_Training_App directory
-os.chdir('Motility_Training_App')
+os.chdir('tr_Volume')
 
 # Change to the data directory
 os.chdir('data')
