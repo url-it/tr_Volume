@@ -70,10 +70,16 @@ xml_root = tree.getroot()
 tree = ET.parse(full_xml_filename)
 xml_root = tree.getroot()
 
+about_tab = AboutTab()
+config_tab = ConfigTab()
 microenv_tab = MicroenvTab()
 user_tab = UserTab()
-# svg = SVGTab()
 sub = SubstrateTab()
+animate_tab = AnimateTab()
+# microenv_tab = MicroenvTab()
+# user_tab = UserTab()
+# # svg = SVGTab()
+# sub = SubstrateTab()
 
 
 nanoHUB_flag = False
