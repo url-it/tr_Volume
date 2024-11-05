@@ -45,7 +45,7 @@ os.chdir(home)
 os.chdir('tr_Volume')
 
 # Change to the data directory
-os.chdir('data')
+os.chdir('../data')
 
 # Define the path to the XML file
 xml_file = 'PhysiCell_settings.xml'
