@@ -480,7 +480,7 @@ tabs = widgets.Tab(children=[about_tab.tab, config_tab.tab, microenv_tab.tab, us
 
 homedir = os.getcwd()
 
-tool_title = widgets.Label('Motility_Training_App')
+tool_title = widgets.Label('tr_Volume')
 if False:
     # define this, but don't use (yet)
     remote_cb = widgets.Checkbox(indent=False, value=False, description='Submit as Batch Job to Clusters/Grid')
