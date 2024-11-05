@@ -85,7 +85,7 @@ if not os.path.isfile(full_xml_filename):
     print(f"File not found: {full_xml_filename}")
     
     # Example: Copy the file from another location
-    source_file_path = '/data/PhysiCell_settings.xml'
+    source_file_path = '../data/PhysiCell_settings.xml'
     if os.path.isfile(source_file_path):
         shutil.copy(source_file_path, full_xml_filename)
         print(f"Copied {source_file_path} to {full_xml_filename}")
@@ -439,14 +439,15 @@ if nanoHUB_flag:
     run_button = Submit(label='Run',
                        start_func=run_sim_func,
                         done_func=run_done_func,
-                        cachename='tr_Volume',
+                        cachename='Motility_Training_App',
                         showcache=False,
                         outcb=outcb)
 else:
-    if (hublib_flag):
+    # if (hublib_flag):
+    if False:
         run_button = RunCommand(start_func=run_sim_func,
                             done_func=run_done_func,
-                            cachename='tr_Volume',
+                            cachename=None,
                             showcache=False,
                             outcb=outcb)  
     else:
@@ -458,33 +459,29 @@ else:
         run_button.on_click(run_button_cb)
 
 
-if nanoHUB_flag or hublib_flag:
-    read_config = widgets.Dropdown(
-        description='Load Config',
-        options=get_config_files(),
-        tooltip='Config File or Previous Run',
-    )
-    read_config.style = {'description_width': '%sch' % str(len(read_config.description) + 1)}
-    read_config.observe(read_config_cb, names='value') 
+
+# if nanoHUB_flag or hublib_flag:
+#     read_config = widgets.Dropdown(
+#         description='Load Config',
+#         options=get_config_files(),
+#         tooltip='Config File or Previous Run',
+#     )
+#     read_config.style = {'description_width': '%sch' % str(len(read_config.description) + 1)}
+#     read_config.observe(read_config_cb, names='value') 
 
 tab_height = 'auto'
 tab_layout = widgets.Layout(width='auto',height=tab_height, overflow_y='scroll',)   # border='2px solid black',
-
-if xml_root.find('.//cell_definitions'):
-    titles = ['About', 'Config Basics', 'Microenvironment', 'User Params', 'Cell Types', 'Out: Plots', 'Animate']
-    tabs = widgets.Tab(children=[about_tab.tab, config_tab.tab, microenv_tab.tab, user_tab.tab, cell_types_tab.tab, sub.tab, animate_tab.tab],
-                   _titles={i: t for i, t in enumerate(titles)},
-                   layout=tab_layout)
-else:
-    titles = ['About', 'Config Basics', 'Microenvironment', 'User Params', 'Out: Plots', 'Animate']
-    tabs = widgets.Tab(children=[about_tab.tab, config_tab.tab, microenv_tab.tab, user_tab.tab, sub.tab, animate_tab.tab],
+#titles = ['About', 'Config Basics', 'Microenvironment', 'User Params', 'Out: Cell Plots', 'Out: Substrate Plots']
+titles = ['About', 'Config Basics', 'Microenvironment', 'User Params', 'Out: Plots']
+#tabs = widgets.Tab(children=[about_tab.tab, config_tab.tab, microenv_tab.tab, user_tab.tab, svg.tab, sub.tab],
+tabs = widgets.Tab(children=[about_tab.tab, config_tab.tab, microenv_tab.tab, user_tab.tab, sub.tab],
                    _titles={i: t for i, t in enumerate(titles)},
                    layout=tab_layout)
 
 homedir = os.getcwd()
 
-tool_title = widgets.Label(r'\(\textbf{tr_Volume}\)')
-if nanoHUB_flag or hublib_flag:
+tool_title = widgets.Label('Motility_Training_App')
+if False:
     # define this, but don't use (yet)
     remote_cb = widgets.Checkbox(indent=False, value=False, description='Submit as Batch Job to Clusters/Grid')
 
@@ -494,7 +491,7 @@ if nanoHUB_flag or hublib_flag:
 else:
     top_row = widgets.HBox(children=[tool_title])
     gui = widgets.VBox(children=[top_row, tabs, run_button])
-    fill_gui_params("data/PhysiCell_settings.xml")
+    fill_gui_params("../data/PhysiCell_settings.xml")
 
 
 # pass in (relative) directory where output data is located
@@ -502,11 +499,12 @@ output_dir = "tmpdir"
 # svg.update(output_dir)
 
 sub.update_dropdown_fields("data")   # WARNING: generates multiple "<Figure size...>" stdout!
-# animate_tab.update_dropdown_fields("data")   
 
 # print('config_tab.svg_interval.value= ',config_tab.svg_interval.value )
 # print('config_tab.mcds_interval.value= ',config_tab.mcds_interval.value )
 #sub.update_params(config_tab)
+
+# The file is not being PhysiCell_settings.xml found in Colab environment so we need to add this
 config_file_path = os.path.join('../data', 'PhysiCell_settings.xml')
 if not os.path.isfile(config_file_path):
     raise FileNotFoundError(f"No such file or directory: '{config_file_path}'")
