@@ -409,29 +409,39 @@ def run_button_cb(s):
     # print("new_config_file = ", new_config_file)
 #    write_config_file(new_config_file)
 
-    # make sure we are where we started
-    os.chdir(homedir)
-
-    # remove any previous data
-    # NOTE: this dir name needs to match the <folder>  in /data/<config_file.xml>
-    os.system('rm -rf tmpdir*')
-    if os.path.isdir('tmpdir'):
-        # something on NFS causing issues...
-        tname = tempfile.mkdtemp(suffix='.bak', prefix='tmpdir_', dir='.')
-        shutil.move('tmpdir', tname)
-    os.makedirs('tmpdir')
-
-    # write the default config file to tmpdir
-    new_config_file = "tmpdir/config.xml"  # use Path; work on Windows?
-    write_config_file(new_config_file)  
-
-    tdir = os.path.abspath('tmpdir')
-    os.chdir(tdir)  # operate from tmpdir; temporary output goes here.  may be copied to cache later
-    # svg.update(tdir)
-    # sub.update_params(config_tab)
+    tdir = "tmpdir"
     sub.update(tdir)
 
-    subprocess.Popen(["../bin/myproj", "config.xml"])
+    executable_path = os.path.abspath(os.path.join('..', 'bin', 'myproj'))
+    if not os.path.isfile(executable_path):
+        raise FileNotFoundError(f"No such file or directory: '{executable_path}'")
+
+    subprocess.Popen([executable_path, "config.xml"])
+
+
+
+    # os.chdir(homedir)
+
+    # # remove any previous data
+    # # NOTE: this dir name needs to match the <folder>  in /data/<config_file.xml>
+    # os.system('rm -rf tmpdir*')
+    # if os.path.isdir('tmpdir'):
+    #     # something on NFS causing issues...
+    #     tname = tempfile.mkdtemp(suffix='.bak', prefix='tmpdir_', dir='.')
+    #     shutil.move('tmpdir', tname)
+    # os.makedirs('tmpdir')
+
+    # # write the default config file to tmpdir
+    # new_config_file = "tmpdir/config.xml"  # use Path; work on Windows?
+    # write_config_file(new_config_file)  
+
+    # tdir = os.path.abspath('tmpdir')
+    # os.chdir(tdir)  # operate from tmpdir; temporary output goes here.  may be copied to cache later
+    # # svg.update(tdir)
+    # # sub.update_params(config_tab)
+    # sub.update(tdir)
+
+    # subprocess.Popen(["../bin/myproj", "config.xml"])
 
 
 #-------------------------------------------------
