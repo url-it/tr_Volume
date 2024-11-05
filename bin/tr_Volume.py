@@ -41,6 +41,7 @@ home = '/content'
 os.chdir(home)
 
 # Change to the Motility_Training_App directory
+# Change to the tr_Volume directory
 os.chdir('tr_Volume')
 
 # Change to the data directory
@@ -66,9 +67,6 @@ if not os.path.isfile(full_xml_filename):
 # Proceed with your code
 tree = ET.parse(full_xml_filename)
 xml_root = tree.getroot()
-# Proceed with your code
-tree = ET.parse(full_xml_filename)
-xml_root = tree.getroot()
 
 about_tab = AboutTab()
 config_tab = ConfigTab()
@@ -76,14 +74,9 @@ microenv_tab = MicroenvTab()
 user_tab = UserTab()
 sub = SubstrateTab()
 animate_tab = AnimateTab()
-# microenv_tab = MicroenvTab()
-# user_tab = UserTab()
-# # svg = SVGTab()
-# sub = SubstrateTab()
-
 
 nanoHUB_flag = False
-if( 'HOME' in os.environ.keys() ):
+if 'HOME' in os.environ.keys():
     nanoHUB_flag = "home/nanohub" in os.environ['HOME']
 
 
