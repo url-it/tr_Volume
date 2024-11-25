@@ -65,47 +65,25 @@ else:
 
 # join_our_list = "(Join/ask questions at https://groups.google.com/forum/#!forum/physicell-users)\n"
 # Change to the home directory
-home = '/content'
-os.chdir(home)
-
-# Change to the Motility_Training_App directory
-# Change to the tr_Volume directory
-os.chdir('tr_Volume')
-
-# Change to the data directory
-os.chdir('data')
-
-# Define the path to the XML file
-xml_file = 'PhysiCell_settings.xml'
-full_xml_filename = os.path.abspath(xml_file)
-
-# Check if the file exists
-if not os.path.isfile(full_xml_filename):
-    # Handle the error: copy the file from another location or provide an error message
-    print(f"File not found: {full_xml_filename}")
-    
-    # Example: Copy the file from another location
-    source_file_path = '../data/PhysiCell_settings.xml'
-    if os.path.isfile(source_file_path):
-        shutil.copy(source_file_path, full_xml_filename)
-        print(f"Copied {source_file_path} to {full_xml_filename}")
-    else:
-        raise FileNotFoundError(f"Source file not found: {source_file_path}")
-
-# Proceed with your code
-tree = ET.parse(full_xml_filename)
-xml_root = tree.getroot()
-
+# create the tabs, but don't display yet
 about_tab = AboutTab()
 config_tab = ConfigTab()
+
+xml_file = os.path.join('data', 'PhysiCell_settings.xml')
+full_xml_filename = os.path.abspath(xml_file)
+
+tree = ET.parse(full_xml_filename)  # this file cannot be overwritten; part of tool distro
+xml_root = tree.getroot()
 microenv_tab = MicroenvTab()
 user_tab = UserTab()
+# svg = SVGTab()
 sub = SubstrateTab()
-animate_tab = AnimateTab()
 
 nanoHUB_flag = False
-if 'HOME' in os.environ.keys():
+if( 'HOME' in os.environ.keys() ):
     nanoHUB_flag = "home/nanohub" in os.environ['HOME']
+
+
 
 
 # # create the tabs, but don't display yet
@@ -231,52 +209,52 @@ def write_config_file(name):
 
 # Fill the "Load Config" dropdown widget with valid cached results (and 
 # default & previous config options)
-def get_config_files():
-    cf = {'DEFAULT': full_xml_filename}
-    path_to_share = os.path.join('~', '.local','share','tr_Volume')
-    dirname = os.path.expanduser(path_to_share)
-    try:
-        os.makedirs(dirname)
-    except:
-        pass
-    files = glob.glob("%s/*.xml" % dirname)
-    # dict.update() will append any new (key,value) pairs
-    cf.update(dict(zip(list(map(os.path.basename, files)), files)))
+# def get_config_files():
+#     cf = {'DEFAULT': full_xml_filename}
+#     path_to_share = os.path.join('~', '.local','share','tr_Volume')
+#     dirname = os.path.expanduser(path_to_share)
+#     try:
+#         os.makedirs(dirname)
+#     except:
+#         pass
+#     files = glob.glob("%s/*.xml" % dirname)
+#     # dict.update() will append any new (key,value) pairs
+#     cf.update(dict(zip(list(map(os.path.basename, files)), files)))
 
-    # Find the dir path (full_path) to the cached dirs
-    if nanoHUB_flag:
-        full_path = os.path.expanduser("~/data/results/.submit_cache/tr_Volume")  # does Windows like this?
-    else:
-        # local cache
-        try:
-            cachedir = os.environ['CACHEDIR']
-            full_path = os.path.join(cachedir, "tr_Volume")
-        except:
-            # print("Exception in get_config_files")
-            return cf
+#     # Find the dir path (full_path) to the cached dirs
+#     if nanoHUB_flag:
+#         full_path = os.path.expanduser("~/data/results/.submit_cache/tr_Volume")  # does Windows like this?
+#     else:
+#         # local cache
+#         try:
+#             cachedir = os.environ['CACHEDIR']
+#             full_path = os.path.join(cachedir, "tr_Volume")
+#         except:
+#             # print("Exception in get_config_files")
+#             return cf
 
-    # Put all those cached (full) dirs into a list
-    dirs_all = [os.path.join(full_path, f) for f in os.listdir(full_path) if f != '.cache_table']
+#     # Put all those cached (full) dirs into a list
+#     dirs_all = [os.path.join(full_path, f) for f in os.listdir(full_path) if f != '.cache_table']
 
-    # Only want those dirs that contain output files (.svg, .mat, etc), i.e., handle the
-    # situation where a user cancels a Run before it really begins, which may create a (mostly) empty cached dir.
-    dirs = [f for f in dirs_all if len(os.listdir(f)) > 5]   # "5" somewhat arbitrary
-    # with debug_view:
-    #     print(dirs)
+#     # Only want those dirs that contain output files (.svg, .mat, etc), i.e., handle the
+#     # situation where a user cancels a Run before it really begins, which may create a (mostly) empty cached dir.
+#     dirs = [f for f in dirs_all if len(os.listdir(f)) > 5]   # "5" somewhat arbitrary
+#     # with debug_view:
+#     #     print(dirs)
 
-    # Get a list of sorted dirs, according to creation timestamp (newest -> oldest)
-    sorted_dirs = sorted(dirs, key=os.path.getctime, reverse=True)
-    # with debug_view:
-    #     print(sorted_dirs)
+#     # Get a list of sorted dirs, according to creation timestamp (newest -> oldest)
+#     sorted_dirs = sorted(dirs, key=os.path.getctime, reverse=True)
+#     # with debug_view:
+#     #     print(sorted_dirs)
 
-    # Get a list of timestamps associated with each dir
-    sorted_dirs_dates = [str(datetime.datetime.fromtimestamp(os.path.getctime(x))) for x in sorted_dirs]
-    # Create a dict of {timestamp:dir} pairs
-    cached_file_dict = dict(zip(sorted_dirs_dates, sorted_dirs))
-    cf.update(cached_file_dict)
-    # with debug_view:
-    #     print(cf)
-    return cf
+#     # Get a list of timestamps associated with each dir
+#     sorted_dirs_dates = [str(datetime.datetime.fromtimestamp(os.path.getctime(x))) for x in sorted_dirs]
+#     # Create a dict of {timestamp:dir} pairs
+#     cached_file_dict = dict(zip(sorted_dirs_dates, sorted_dirs))
+#     cf.update(cached_file_dict)
+#     # with debug_view:
+#     #     print(cf)
+#     return cf
 
 
 # Using params in a config (.xml) file, fill GUI widget values in each of the "input" tabs
@@ -408,17 +386,24 @@ def run_button_cb(s):
 #    new_config_file = full_xml_filename
     # print("new_config_file = ", new_config_file)
 #    write_config_file(new_config_file)
+    os.system('rm -rf tmpdir*')
+    if os.path.isdir('tmpdir'):
+        # something on NFS causing issues...
+        tname = tempfile.mkdtemp(suffix='.bak', prefix='tmpdir_', dir='.')
+        shutil.move('tmpdir', tname)
+    os.makedirs('tmpdir')
 
-    tdir = "tmpdir"
+    # write the default config file to tmpdir
+    new_config_file = "tmpdir/config.xml"  # use Path; work on Windows?
+    write_config_file(new_config_file)  
+
+    tdir = os.path.abspath('tmpdir')
+    os.chdir(tdir)  # operate from tmpdir; temporary output goes here.  may be copied to cache later
+    # svg.update(tdir)
+    # sub.update_params(config_tab)
     sub.update(tdir)
 
-    executable_path = os.path.abspath(os.path.join('..', 'bin', 'myproj'))
-    if not os.path.isfile(executable_path):
-        raise FileNotFoundError(f"No such file or directory: '{executable_path}'")
-
-    subprocess.Popen([executable_path, "config.xml"])
-
-
+    subprocess.Popen(["../bin/myproj", "config.xml"])
 
     # os.chdir(homedir)
 
@@ -449,7 +434,7 @@ if nanoHUB_flag:
     run_button = Submit(label='Run',
                        start_func=run_sim_func,
                         done_func=run_done_func,
-                        cachename='Motility_Training_App',
+                        cachename='tr_Volume',
                         showcache=False,
                         outcb=outcb)
 else:
@@ -514,10 +499,10 @@ sub.update_dropdown_fields("data")   # WARNING: generates multiple "<Figure size
 # print('config_tab.mcds_interval.value= ',config_tab.mcds_interval.value )
 #sub.update_params(config_tab)
 
-# The file is not being PhysiCell_settings.xml found in Colab environment so we need to add this
-config_file_path = os.path.join('../data', 'PhysiCell_settings.xml')
-if not os.path.isfile(config_file_path):
-    raise FileNotFoundError(f"No such file or directory: '{config_file_path}'")
-fill_gui_params(config_file_path)
-output_dir = "tmpdir"
-sub.update_dropdown_fields("data")
+# # The file is not being PhysiCell_settings.xml found in Colab environment so we need to add this
+# config_file_path = os.path.join('../data', 'PhysiCell_settings.xml')
+# if not os.path.isfile(config_file_path):
+#     raise FileNotFoundError(f"No such file or directory: '{config_file_path}'")
+# fill_gui_params(config_file_path)
+# output_dir = "tmpdir"
+# sub.update_dropdown_fields("data")
