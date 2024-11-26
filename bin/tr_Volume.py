@@ -83,9 +83,6 @@ nanoHUB_flag = False
 if( 'HOME' in os.environ.keys() ):
     nanoHUB_flag = "home/nanohub" in os.environ['HOME']
 
-
-
-
 # # create the tabs, but don't display yet
 # about_tab = AboutTab()
 # config_tab = ConfigTab()
