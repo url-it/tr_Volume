@@ -475,7 +475,11 @@ tabs = widgets.Tab(children=[about_tab.tab, config_tab.tab, microenv_tab.tab, us
 
 homedir = os.getcwd()
 
+# homedir = os.getcwd()
+
+# tool_title = widgets.Label(r'\(\textbf{tr_mechanics}\)')
 tool_title = widgets.Label('tr_Volume')
+# if nanoHUB_flag or hublib_flag:
 if False:
     # define this, but don't use (yet)
     remote_cb = widgets.Checkbox(indent=False, value=False, description='Submit as Batch Job to Clusters/Grid')
@@ -486,8 +490,7 @@ if False:
 else:
     top_row = widgets.HBox(children=[tool_title])
     gui = widgets.VBox(children=[top_row, tabs, run_button])
-    fill_gui_params("../data/PhysiCell_settings.xml")
-
+    fill_gui_params("data/PhysiCell_settings.xml")
 
 # pass in (relative) directory where output data is located
 output_dir = "tmpdir"
