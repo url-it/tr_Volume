@@ -28,6 +28,7 @@ import platform
 import subprocess
 from debug import debug_view
 
+
 hublib_flag = True
 if platform.system() != 'Windows':
     try:

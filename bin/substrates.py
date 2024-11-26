@@ -400,7 +400,7 @@ class SubstrateTab(object):
             # box_layout = Layout(border='0px solid')
             controls_box = VBox([row1, row2])  # ,width='50%', layout=box_layout)
             self.tab = VBox([controls_box, self.i_plot, download_row])
-            
+
         elif (hublib_flag):
             self.download_button = Download('mcds.zip', style='warning', icon='cloud-download', 
                                                 tooltip='Download data', cb=self.download_cb)
@@ -1153,7 +1153,7 @@ class SubstrateTab(object):
         # oxy_ax = self.fig.add_subplot(grid[3:4, 0:1])  # nrows, ncols
         # x = np.linspace(0, 500)
         # oxy_ax.plot(x, 300*np.sin(x))
-
+        plt.show()   # rwh: for Colab
     #---------------------------------------------------------------------------
     # def plot_plots(self, frame):
     #     # if (self.first_time):
