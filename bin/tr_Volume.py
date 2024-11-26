@@ -213,52 +213,52 @@ def write_config_file(name):
 
 # Fill the "Load Config" dropdown widget with valid cached results (and 
 # default & previous config options)
-# def get_config_files():
-#     cf = {'DEFAULT': full_xml_filename}
-#     path_to_share = os.path.join('~', '.local','share','tr_Volume')
-#     dirname = os.path.expanduser(path_to_share)
-#     try:
-#         os.makedirs(dirname)
-#     except:
-#         pass
-#     files = glob.glob("%s/*.xml" % dirname)
-#     # dict.update() will append any new (key,value) pairs
-#     cf.update(dict(zip(list(map(os.path.basename, files)), files)))
+def get_config_files():
+    cf = {'DEFAULT': full_xml_filename}
+    path_to_share = os.path.join('~', '.local','share','tr_Volume')
+    dirname = os.path.expanduser(path_to_share)
+    try:
+        os.makedirs(dirname)
+    except:
+        pass
+    files = glob.glob("%s/*.xml" % dirname)
+    # dict.update() will append any new (key,value) pairs
+    cf.update(dict(zip(list(map(os.path.basename, files)), files)))
 
-#     # Find the dir path (full_path) to the cached dirs
-#     if nanoHUB_flag:
-#         full_path = os.path.expanduser("~/data/results/.submit_cache/tr_Volume")  # does Windows like this?
-#     else:
-#         # local cache
-#         try:
-#             cachedir = os.environ['CACHEDIR']
-#             full_path = os.path.join(cachedir, "tr_Volume")
-#         except:
-#             # print("Exception in get_config_files")
-#             return cf
+    # Find the dir path (full_path) to the cached dirs
+    if nanoHUB_flag:
+        full_path = os.path.expanduser("~/data/results/.submit_cache/tr_Volume")  # does Windows like this?
+    else:
+        # local cache
+        try:
+            cachedir = os.environ['CACHEDIR']
+            full_path = os.path.join(cachedir, "tr_Volume")
+        except:
+            # print("Exception in get_config_files")
+            return cf
 
-#     # Put all those cached (full) dirs into a list
-#     dirs_all = [os.path.join(full_path, f) for f in os.listdir(full_path) if f != '.cache_table']
+    # Put all those cached (full) dirs into a list
+    dirs_all = [os.path.join(full_path, f) for f in os.listdir(full_path) if f != '.cache_table']
 
-#     # Only want those dirs that contain output files (.svg, .mat, etc), i.e., handle the
-#     # situation where a user cancels a Run before it really begins, which may create a (mostly) empty cached dir.
-#     dirs = [f for f in dirs_all if len(os.listdir(f)) > 5]   # "5" somewhat arbitrary
-#     # with debug_view:
-#     #     print(dirs)
+    # Only want those dirs that contain output files (.svg, .mat, etc), i.e., handle the
+    # situation where a user cancels a Run before it really begins, which may create a (mostly) empty cached dir.
+    dirs = [f for f in dirs_all if len(os.listdir(f)) > 5]   # "5" somewhat arbitrary
+    # with debug_view:
+    #     print(dirs)
 
-#     # Get a list of sorted dirs, according to creation timestamp (newest -> oldest)
-#     sorted_dirs = sorted(dirs, key=os.path.getctime, reverse=True)
-#     # with debug_view:
-#     #     print(sorted_dirs)
+    # Get a list of sorted dirs, according to creation timestamp (newest -> oldest)
+    sorted_dirs = sorted(dirs, key=os.path.getctime, reverse=True)
+    # with debug_view:
+    #     print(sorted_dirs)
 
-#     # Get a list of timestamps associated with each dir
-#     sorted_dirs_dates = [str(datetime.datetime.fromtimestamp(os.path.getctime(x))) for x in sorted_dirs]
-#     # Create a dict of {timestamp:dir} pairs
-#     cached_file_dict = dict(zip(sorted_dirs_dates, sorted_dirs))
-#     cf.update(cached_file_dict)
-#     # with debug_view:
-#     #     print(cf)
-#     return cf
+    # Get a list of timestamps associated with each dir
+    sorted_dirs_dates = [str(datetime.datetime.fromtimestamp(os.path.getctime(x))) for x in sorted_dirs]
+    # Create a dict of {timestamp:dir} pairs
+    cached_file_dict = dict(zip(sorted_dirs_dates, sorted_dirs))
+    cf.update(cached_file_dict)
+    # with debug_view:
+    #     print(cf)
+    return cf
 
 
 # Using params in a config (.xml) file, fill GUI widget values in each of the "input" tabs
@@ -274,6 +274,14 @@ def fill_gui_params(config_file):
     if xml_root.find('.//cell_definitions'):
         cell_types_tab.fill_gui(xml_root)
 
+def run_done_func_colab(s, rdir):
+    global run_button
+    with debug_view:
+        print('run_done_func: results in', rdir)
+    
+    sub.update(rdir)
+    run_button.description = "Run"
+    run_button.button_style='success'
 
 def run_done_func(s, rdir):
     # with debug_view:
@@ -292,7 +300,7 @@ def run_done_func(s, rdir):
     # new results are available, so update dropdown
     # with debug_view:
     #     print('run_done_func: ---- before updating read_config.options')
-    read_config.options = get_config_files()
+    # read_config.options = get_config_files()
     # with debug_view:
     #     print('run_done_func: ---- after updating read_config.options')
 
@@ -373,6 +381,7 @@ def outcb(s):
     # This is called when new output is received.
     # Only update file list for certain messages: 
     # print("outcb(): s=",s)
+    print("outcb(): s=",s)
     if "simulat" in s:    # "current simulated time: 60 min (max: 14400 min)"
         # New Data. update visualizations
         # svg.update('')
@@ -380,7 +389,6 @@ def outcb(s):
         # sub.update_params(config_tab)
         sub.update()
     return s
-
 
 # Callback for the ("dumb") 'Run' button (without hublib.ui)
 def run_button_cb(s):
@@ -409,7 +417,10 @@ def run_button_cb(s):
     # sub.update_params(config_tab)
     sub.update(tdir)
 
-    subprocess.Popen(["../bin/myproj", "config.xml"])
+    run_button.description = "WAIT..."
+    subprocess.run(["../bin/myproj", "config.xml"])
+    sub.max_frames.value = int(config_tab.tmax.value / config_tab.svg_interval.value)    # 42
+    run_button.description = "Run"
 
     # os.chdir(homedir)
 
@@ -447,7 +458,7 @@ else:
     # if (hublib_flag):
     if False:
         run_button = RunCommand(start_func=run_sim_func,
-                            done_func=run_done_func,
+                            done_func=run_done_func_colab,
                             cachename=None,
                             showcache=False,
                             outcb=outcb)  
@@ -461,14 +472,14 @@ else:
 
 
 
-# if nanoHUB_flag or hublib_flag:
-#     read_config = widgets.Dropdown(
-#         description='Load Config',
-#         options=get_config_files(),
-#         tooltip='Config File or Previous Run',
-#     )
-#     read_config.style = {'description_width': '%sch' % str(len(read_config.description) + 1)}
-#     read_config.observe(read_config_cb, names='value') 
+if nanoHUB_flag or hublib_flag:
+    read_config = widgets.Dropdown(
+        description='Load Config',
+        options=get_config_files(),
+        tooltip='Config File or Previous Run',
+    )
+    read_config.style = {'description_width': '%sch' % str(len(read_config.description) + 1)}
+    read_config.observe(read_config_cb, names='value') 
 
 tab_height = 'auto'
 tab_layout = widgets.Layout(width='auto',height=tab_height, overflow_y='scroll',)   # border='2px solid black',
@@ -494,6 +505,11 @@ if False:
     gui = widgets.VBox(children=[top_row, tabs, run_button.w])
     fill_gui_params(read_config.options['DEFAULT'])
 else:
+    # FINALLY FOUND IT
+    cpp_output = widgets.Output()
+    acc = widgets.Accordion(children=[cpp_output])
+    acc.set_title(0, 'Output')
+
     top_row = widgets.HBox(children=[tool_title])
     gui = widgets.VBox(children=[top_row, tabs, run_button])
     fill_gui_params("data/PhysiCell_settings.xml")
