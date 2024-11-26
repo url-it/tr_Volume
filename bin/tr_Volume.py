@@ -10,6 +10,11 @@ from about import AboutTab
 from config import ConfigTab
 from microenv_params import MicroenvTab
 from user_params import UserTab
+from substrates import SubstrateTab
+from pathlib import Path
+import platform
+import subprocess
+from debug import debug_view
 try:
     from cell_types import CellTypesTab
 except:
@@ -78,6 +83,7 @@ microenv_tab = MicroenvTab()
 user_tab = UserTab()
 # svg = SVGTab()
 sub = SubstrateTab()
+animate_tab = AnimateTab()
 
 nanoHUB_flag = False
 if( 'HOME' in os.environ.keys() ):
@@ -383,6 +389,8 @@ def run_button_cb(s):
 #    new_config_file = full_xml_filename
     # print("new_config_file = ", new_config_file)
 #    write_config_file(new_config_file)
+    os.chdir(homedir)
+
     os.system('rm -rf tmpdir*')
     if os.path.isdir('tmpdir'):
         # something on NFS causing issues...
