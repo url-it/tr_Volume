@@ -84,7 +84,7 @@ microenv_tab = MicroenvTab()
 user_tab = UserTab()
 # svg = SVGTab()
 sub = SubstrateTab()
-animate_tab = AnimateTab()
+# animate_tab = AnimateTab()
 
 nanoHUB_flag = False
 if( 'HOME' in os.environ.keys() ):
