@@ -311,7 +311,7 @@ class SubstrateTab(object):
         self.substrates_toggle = Checkbox(
             description='Substrates',
             disabled=False,
-            value=True,
+            value=False,
 #           layout=Layout(width=constWidth2),
         )
         def substrates_toggle_cb(b):
