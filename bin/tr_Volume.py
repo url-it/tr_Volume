@@ -288,6 +288,9 @@ def run_done_func_colab(s, rdir):
     run_button.description = "Run"
     run_button.button_style='success'
 
+    sub.running_message.layout.display = 'none'
+
+
 def run_done_func(s, rdir):
     # with debug_view:
     #     print('run_done_func: results in', rdir)
@@ -310,6 +313,8 @@ def run_done_func(s, rdir):
     #     print('run_done_func: ---- after updating read_config.options')
 
     # sub.update_dropdown_fields("data")   # WARNING: fill in the substrate field(s)
+
+    sub.running_message.layout.display = 'none'  # Hide the running message
 
     # and update visualizations
     # svg.update(rdir)
@@ -408,6 +413,8 @@ def run_button_cb(s):
         output_widget.clear_output()  # Clear previous output
         print("Running myproj ...")
 
+        sub.running_message.layout.display = 'block'
+
         # make sure we are where we started
         os.chdir(homedir)
 
@@ -442,6 +449,7 @@ def run_button_cb(s):
         process.wait()
         sub.max_frames.value = int(config_tab.tmax.value / config_tab.svg_interval.value)  # 42
         run_button.description = "Run"
+        sub.running_message.layout.display = 'none' 
 
 #-------------------------------------------------
 if nanoHUB_flag:
