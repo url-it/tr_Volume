@@ -1182,9 +1182,14 @@ class SubstrateTab(object):
     #     # self.plot_svg(frame)
     def save_png(self):
         for frame in range(self.max_frames.value):
-            self.plot_substrate(frame, force_plot=True)
-            self.png_frame += 1 
+
+            if self.substrates_toggle.value:
+                self.plot_substrate(frame, force_plot=True)
+            else:
+                self.fig = plt.figure(figsize=(self.figsize_width_svg, self.figsize_height_svg))
+                self.plot_svg(frame) 
+            self.png_frame += 1
             png_file = os.path.join(self.output_dir, f"frame{self.png_frame:04d}.png")
             self.fig.savefig(png_file)
             plt.close(self.fig)
-        self.png_frame=0
+        self.png_frame = 0
