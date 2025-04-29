@@ -404,8 +404,20 @@ class SubstrateTab(object):
                 tooltip='Download data',
             )
             self.download_svg_button.on_click(self.download_local_svg_cb)
+            
+            self.download_png_button = Button(
+                description='Download PNGs',
+                button_style='success',
+                tooltip='Download all PNG files as a zip',
+            )
+            self.download_png_button.on_click(self.download_png_cb)
 
-            download_row = HBox([self.download_button, self.download_svg_button])
+            # Add the button to the UI
+            self.tab = VBox([self.i_plot, self.download_png_button])
+
+
+
+            download_row = HBox([self.download_button, self.download_svg_button, self.download_png_button])
             # box_layout = Layout(border='0px solid')
             controls_box = VBox([row1, row2])  # ,width='50%', layout=box_layout)
             self.tab = VBox([controls_box, self.running_message,self.i_plot, download_row])
@@ -577,6 +589,17 @@ class SubstrateTab(object):
                 self.max_frames.value = int(last_file[-12:-4])
 
     def download_local_svg_cb(self,s):
+        # self.save_png()
+        file_str = os.path.join(self.output_dir, '*.svg')
+        # print('zip up all ',file_str)
+        with zipfile.ZipFile('svg.zip', 'w') as myzip:
+            for f in glob.glob(file_str):
+                myzip.write(f, os.path.basename(f))   # 2nd arg avoids full filename path in the archive
+
+        if self.colab_flag:
+            files.download('svg.zip')
+    
+    def download_png_cb(self,s):
         self.save_png()
         file_str = os.path.join(self.output_dir, '*.png')
         # print('zip up all ',file_str)
