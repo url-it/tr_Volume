@@ -608,7 +608,7 @@ class SubstrateTab(object):
                 myzip.write(f, os.path.basename(f))   # 2nd arg avoids full filename path in the archive
 
         if self.colab_flag:
-            files.download('svg.zip')
+            files.download('png.zip')
 
     def download_local_cb(self,s):
         file_xml = os.path.join(self.output_dir, '*.xml')
