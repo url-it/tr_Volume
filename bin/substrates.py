@@ -749,7 +749,12 @@ class SubstrateTab(object):
     #------------------------------------------------------------
     # def plot_svg(self, frame, rdel=''):
     def plot_svg(self, frame):
+        # rset title
+        self.title_str = ''
+
+
         # global current_idx, axes_max
+
         global current_frame
         current_frame = frame
         fname = "snapshot%08d.svg" % frame
